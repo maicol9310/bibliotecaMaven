@@ -1,0 +1,36 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=NTesla93*
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks:
+      - backend
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: biblioteca-api
+    depends_on:
+      - sqlserver
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=biblioteca;encrypt=true;trustServerCertificate=true;
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=NTesla93*
+      - SECURITY_API_KEY=mi-api-key-super-secreta
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+volumes:
+  sql_data:
+
+networks:
+  backend:

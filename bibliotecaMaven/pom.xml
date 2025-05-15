@@ -14,7 +14,7 @@
 	<name>bibliotecaMaven</name>
 	<description>Biblioteca virtual</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<!-- Spring Boot Starter Web -->
@@ -58,6 +58,11 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>6.4.5</version>
+		</dependency>
 		<!-- SQL Server JDBC Driver compatible con Java 21 -->
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
@@ -83,14 +88,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

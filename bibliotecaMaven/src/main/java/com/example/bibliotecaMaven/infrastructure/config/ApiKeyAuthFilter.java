@@ -4,16 +4,15 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 
 public class ApiKeyAuthFilter extends OncePerRequestFilter {
+
     private final String apiKey;
 
     public ApiKeyAuthFilter(String apiKey) {
@@ -26,16 +25,19 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String requestApiKey = request.getHeader("X-API-KEY");
+        String header = request.getHeader("X-API-KEY");
 
-        if (requestApiKey == null || !requestApiKey.equals(apiKey)) {
-            throw new BadCredentialsException("Invalid API Key");
+        if (header == null || !header.equals(apiKey)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("API Key inválida");
+            return;
         }
 
-        Authentication authentication = new PreAuthenticatedAuthenticationToken(
-                "api-user", null, AuthorityUtils.NO_AUTHORITIES);
-
+        // Aquí se establece la autenticación manualmente
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken("apikey-user", null, Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         filterChain.doFilter(request, response);
     }
 }
